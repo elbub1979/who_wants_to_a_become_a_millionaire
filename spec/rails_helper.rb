@@ -2,7 +2,7 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 # Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'spec_helper'
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -62,5 +62,23 @@ RSpec.configure do |config|
 end
 
 # Это нужно, чтобы капибара искала стили и js в правильном месте
-Capybara.asset_host = "http://localhost:3000"
+Capybara.asset_host = 'http://localhost:3000'
 
+if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6.0')
+  if Gem::Version.new(Rails.version) < Gem::Version.new('5.0.0')
+    class ActionController::TestResponse < ActionDispatch::TestResponse
+      def recycle!
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.7.0')
+          @mon_data = nil
+          @mon_data_owner_object_id = nil
+        else
+          @mon_mutex = nil
+          @mon_mutex_owner_object_id = nil
+        end
+        initialize
+      end
+    end
+  else
+    warn 'Monkeypatch for ActionController::TestResponse is no longer needed'
+  end
+end

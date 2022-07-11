@@ -62,6 +62,17 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to render_template('show') # и отрендерить шаблон show
     end
 
+    # юзер не видит может зайти в чужую игру
+    it 'not #show alien game' do
+      alien_game = FactoryBot.create(:game_with_questions) # создаем новую игру, юзер не прописан, будет создан фабрикой новый
+
+      get :show, id: alien_game.id # пробуем зайти на эту игру текущим залогиненным user
+
+      expect(response.status).to eq(302) # статус не 200 ОК
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to be # во flash должен быть прописано апкдупреждение
+    end
+
     # юзер отвечает на игру корректно - игра продолжается
     it 'answers correct' do
       # передаем параметр params[:letter]
