@@ -120,4 +120,36 @@ RSpec.describe Game, type: :model do
       expect(game_w_questions.status).to eq(:money)
     end
   end
+
+  context '#answer_current_question!' do
+    it 'correct answer' do
+      question = game_w_questions.current_game_question
+      level = game_w_questions.current_level
+      game_w_questions.answer_current_question!(question.correct_answer_key)
+      expect(game_w_questions.current_level).to eq(level + 1)
+    end
+
+    it 'wrong answer' do
+      question = game_w_questions.current_game_question
+      game_w_questions.answer_current_question!(question['d'])
+      expect(game_w_questions.is_failed).to eq(true)
+      expect(game_w_questions.prize).to eq(0)
+    end
+
+    it 'last answer' do
+      game_w_questions.current_level = Question::QUESTION_LEVELS.max
+      question = game_w_questions.current_game_question
+      level = game_w_questions.current_level
+      game_w_questions.answer_current_question!(question.correct_answer_key)
+      expect(game_w_questions.current_level).to eq(level + 1)
+      expect(game_w_questions.prize).to eq(1_000_000)
+    end
+
+    it 'after time out' do
+      game_w_questions.created_at = 1.hour.ago
+      question = game_w_questions.current_game_question
+      game_w_questions.answer_current_question!(question.correct_answer_key)
+      expect(game_w_questions.is_failed).to eq(true)
+    end
+  end
 end
