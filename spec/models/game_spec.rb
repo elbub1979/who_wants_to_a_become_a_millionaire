@@ -82,6 +82,18 @@ RSpec.describe Game, type: :model do
     end
   end
 
+  it '#current_game_question' do
+    question = game_w_questions.current_game_question
+    game_w_questions.answer_current_question!(question.correct_answer_key)
+    expect(game_w_questions.current_game_question.level).to eq(1)
+  end
+
+  it '#previous_level' do
+    question = game_w_questions.current_game_question
+    game_w_questions.answer_current_question!(question.correct_answer_key)
+    expect(game_w_questions.previous_level).to eq(game_w_questions.current_level - 1)
+  end
+
   context '.status' do
     before(:each) do
       game_w_questions.finished_at = Time.now
