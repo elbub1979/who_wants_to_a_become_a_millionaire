@@ -120,5 +120,16 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to redirect_to(user_path(user))
       expect(flash[:warning]).to be
     end
+
+    it 'user can not play two games at the same time' do
+      request.env['HTTP_REFERER'] = game_path(game_w_questions)
+      expect { post :create }.to change(Game, :count).by(0)
+
+      game = assigns(:game)
+      expect(game).to be_nil
+
+      expect(response).to redirect_to(game_path(game_w_questions))
+      expect(flash[:alert]).to be
+    end
   end
 end
