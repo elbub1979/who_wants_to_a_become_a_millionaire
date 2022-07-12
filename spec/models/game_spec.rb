@@ -83,9 +83,9 @@ RSpec.describe Game, type: :model do
   end
 
   it '#current_game_question' do
-    question = game_w_questions.current_game_question
-    game_w_questions.answer_current_question!(question.correct_answer_key)
-    expect(game_w_questions.current_game_question.level).to eq(1)
+    game_w_questions.current_level = 14
+    question = game_w_questions.game_questions.last
+    expect(game_w_questions.current_game_question).to eq(question)
   end
 
   it '#previous_level' do
