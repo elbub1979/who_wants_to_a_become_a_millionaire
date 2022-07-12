@@ -38,7 +38,6 @@ RSpec.describe Game, type: :model do
     end
   end
 
-
   # тесты на основную игровую логику
   context 'game mechanics' do
 
@@ -120,35 +119,78 @@ RSpec.describe Game, type: :model do
     end
   end
 
-  context '#answer_current_question!' do
-    it 'correct answer' do
-      question = game_w_questions.current_game_question
-      level = game_w_questions.current_level
-      game_w_questions.answer_current_question!(question.correct_answer_key)
-      expect(game_w_questions.current_level).to eq(level + 1)
+  describe '#answer_current_question!' do
+    let(:question) { game_w_questions.current_game_question }
+
+    context 'when correct answer' do
+      before { game_w_questions.answer_current_question!(question.correct_answer_key) }
+
+      it 'game not finish' do
+        expect(game_w_questions.finished?).to be false
+      end
+
+      it 'game not failed' do
+        expect(game_w_questions.is_failed?).to be false
+      end
     end
 
-    it 'wrong answer' do
-      question = game_w_questions.current_game_question
-      game_w_questions.answer_current_question!(question['d'])
-      expect(game_w_questions.is_failed).to eq(true)
-      expect(game_w_questions.prize).to eq(0)
+    context 'when correct answer' do
+      before { game_w_questions.answer_current_question!('c') }
+
+      it 'game finish' do
+        expect(game_w_questions.finished?).to be true
+      end
+
+      it 'game status' do
+        expect(game_w_questions.status).to eq(:fail)
+      end
+
+      it 'game prize' do
+        expect(game_w_questions.prize).to eq(0)
+      end
     end
 
-    it 'last answer' do
-      game_w_questions.current_level = Question::QUESTION_LEVELS.max
-      question = game_w_questions.current_game_question
-      level = game_w_questions.current_level
-      game_w_questions.answer_current_question!(question.correct_answer_key)
-      expect(game_w_questions.current_level).to eq(level + 1)
-      expect(game_w_questions.prize).to eq(1_000_000)
+    context 'last question' do
+      before { game_w_questions.current_level = Question::QUESTION_LEVELS.max }
+      before { game_w_questions.answer_current_question!(question.correct_answer_key) }
+
+      it 'game finish' do
+        expect(game_w_questions.finished?).to be true
+      end
+
+      it 'fail status game' do
+        expect(game_w_questions.is_failed).to be false
+      end
+
+      it 'game status' do
+        expect(game_w_questions.status).to eq(:won)
+      end
+
+      it 'game prize' do
+        expect(game_w_questions.prize).to eq(1_000_000)
+      end
     end
 
-    it 'after time out' do
-      game_w_questions.created_at = 1.hour.ago
-      question = game_w_questions.current_game_question
-      game_w_questions.answer_current_question!(question.correct_answer_key)
-      expect(game_w_questions.is_failed).to eq(true)
+    context 'after time out' do
+      before { game_w_questions.created_at = 1.hour.ago }
+      before { game_w_questions.answer_current_question!(question.correct_answer_key) }
+
+      it 'game finish' do
+        expect(game_w_questions.finished?).to be true
+      end
+
+      it 'game status' do
+        expect(game_w_questions.status).to eq(:timeout)
+      end
+
+      it 'fail status game' do
+        expect(game_w_questions.is_failed).to be true
+      end
+
+      it 'game prize' do
+        expect(game_w_questions.prize).to eq(0)
+      end
     end
   end
+
 end
