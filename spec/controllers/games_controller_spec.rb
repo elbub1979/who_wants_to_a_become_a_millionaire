@@ -97,7 +97,7 @@ RSpec.describe GamesController, type: :controller do
 
       expect(response.status).to eq(302) # статус не 200 ОК
       expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to be # во flash должен быть прописано апкдупреждение
+      expect(flash[:alert]).to be # во flash должен быть прописано предупреждение
     end
 
     # юзер отвечает на игру корректно - игра продолжается
@@ -110,6 +110,17 @@ RSpec.describe GamesController, type: :controller do
       expect(game.current_level).to be > 0
       expect(response).to redirect_to(game_path(game))
       expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
+    end
+
+    # юзер отвечает на игру корректно - игра продолжается
+    it 'answers incorrect' do
+      # передаем параметр params[:letter]
+      put :answer, id: game_w_questions.id, letter: 'c'
+      game = assigns(:game)
+
+      expect(game.finished?).to be_truthy
+      expect(response).to redirect_to(user_path(user))
+      expect(flash[:alert]).to be # во flash должен быть прописано предупреждение
     end
 
     # тест на отработку "помощи зала"
