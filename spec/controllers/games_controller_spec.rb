@@ -291,7 +291,36 @@ RSpec.describe GamesController, type: :controller do
         it 'should to redirect to game' do
           expect(response).to redirect_to(game_path(game))
         end
+      end
 
+      context 'get fifty_fifty help' do
+        before { put :help, id: game_w_questions.id, help_type: :fifty_fifty }
+
+        let(:game) { assigns(:game) }
+
+        it 'the game is expected to continue' do
+          expect(game.finished?).to be_falsey
+        end
+
+        it 'should true in fifty_fifty_used' do
+          expect(game.fifty_fifty_used).to be_truthy
+        end
+
+        it 'should audience_help in help hash' do
+          expect(game.current_game_question.help_hash[:fifty_fifty]).to be
+        end
+
+        it 'should all answers keys in the hint' do
+          expect(game.current_game_question.help_hash[:fifty_fifty].size).to eq(2)
+        end
+
+        it 'should all answers keys in the hint' do
+          expect(game.current_game_question.help_hash[:fifty_fifty]).to include(game.current_game_question.correct_answer_key)
+        end
+
+        it 'should to redirect to game' do
+          expect(response).to redirect_to(game_path(game))
+        end
       end
     end
   end
