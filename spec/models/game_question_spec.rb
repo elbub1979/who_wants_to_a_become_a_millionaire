@@ -109,13 +109,6 @@ RSpec.describe GameQuestion, type: :model do
           it 'should be friend_call hint a string' do
             expect(fc.class.to_s).to eq('String')
           end
-          # it 'should be to elements in help hash' do
-          #   expect(ff.size).to eq(2)
-          # end
-
-          # it 'should be correct answer in help hash' do
-          #   expect(ff).to include(game_question.correct_answer_key)
-          # end
         end
       end
     end
