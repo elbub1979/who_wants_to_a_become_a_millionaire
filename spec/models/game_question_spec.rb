@@ -38,18 +38,51 @@ RSpec.describe GameQuestion, type: :model do
   end
 
   describe '#help_hash' do
-    context 'without audience_help hint' do
-      it 'should empty audience_help in help hash' do
-        expect(game_question.help_hash).not_to include(:audience_help)
-      end
-      context 'with audience_help hint' do
-        before { game_question.add_audience_help }
-        let(:ah) { game_question.help_hash[:audience_help] }
-        it 'should help hash included audience_help' do
-          expect(game_question.help_hash).to include(:audience_help)
+    context 'check audience_help hint' do
+      context 'without audience_help hint' do
+
+        it 'should empty audience_help in help hash' do
+          expect(game_question.help_hash).not_to include(:audience_help)
         end
-        it 'should all answers keys in the hint' do
-          expect(ah.keys).to contain_exactly('a', 'b', 'c', 'd')
+
+        context 'with audience_help hint' do
+          before { game_question.add_audience_help }
+
+          let(:ah) { game_question.help_hash[:audience_help] }
+
+          it 'should help hash included audience_help' do
+            expect(game_question.help_hash).to include(:audience_help)
+          end
+
+          it 'should all answers keys in the hint' do
+            expect(ah.keys).to contain_exactly('a', 'b', 'c', 'd')
+          end
+        end
+      end
+    end
+
+    context 'check fifty_fifty hint' do
+      context 'without fifty_fifty hint' do
+        it 'should empty audience_help in help hash' do
+          expect(game_question.help_hash).not_to include(:fifty_fifty)
+        end
+
+        context 'with fifty_fifty hint' do
+          before { game_question.add_fifty_fifty }
+
+          let(:ff) { game_question.help_hash[:fifty_fifty] }
+
+          it 'should help hash included fifty_fifty' do
+            expect(game_question.help_hash).to include(:fifty_fifty)
+          end
+
+          it 'should be to elements in help hash' do
+            expect(ff.size).to eq(2)
+          end
+
+          it 'should be correct answer in help hash' do
+            expect(ff).to include(game_question.correct_answer_key)
+          end
         end
       end
     end
