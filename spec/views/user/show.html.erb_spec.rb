@@ -2,8 +2,6 @@ require 'rails_helper'
 
 RSpec.describe 'users/show', type: :view do
 
-  # let(:current_user) { assign(:user, FactoryBot.build_stubbed(name: 'Илья')) }
-
   context 'looking at the users page' do
     before do
       assign(:user, FactoryBot.build_stubbed(:user, name: 'Илья'))
