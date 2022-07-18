@@ -2,21 +2,44 @@ require 'rails_helper'
 
 RSpec.describe 'users/show', type: :view do
 
-  # создаем пользователя
-  before(:each) do
-    assign(:user, FactoryBot.build_stubbed(:user, id: 1, name: 'Илья', balance: 5000))
-    assign(:games, FactoryBot.build_stubbed(:game, id: 15, created_at: Time.parse('2016.10.09, 13:00'),
-                                                   current_level: 10, prize: 1000))
+  # let(:current_user) { assign(:user, FactoryBot.build_stubbed(name: 'Илья')) }
 
-    params[:user_id] = [1]
+  context 'looking at the users page' do
+    before do
+      assign(:user, FactoryBot.build_stubbed(:user, name: 'Илья'))
 
+      render
+    end
 
-
-    render
+    it 'should get user name on page' do
+      expect(rendered).to match 'Илья'
+    end
   end
 
-  # Проверяем, что шаблон выводит имена игроков
-  it 'should render player name' do
-    expect(rendered).to match 'Илья'
+  context 'looking at the user\'s own page' do
+    let(:current_user) { assign(:user, FactoryBot.build_stubbed(:user, name: 'Илья')) }
+
+    before do
+      allow(view).to receive(:current_user).and_return(current_user)
+
+      render
+    end
+
+    it 'should the user to be able to edit' do
+      expect(rendered).to match 'Сменить имя и пароль'
+    end
+  end
+
+  context 'render game partial' do
+    before do
+      assign(:user, FactoryBot.build_stubbed(:user, name: 'Илья'))
+      assign(:games, [FactoryBot.build_stubbed(:game)])
+      stub_template 'users/_game.html.erb' => 'User game goes here'
+      render
+    end
+
+    it 'should get game partial' do
+      expect(rendered).to have_content 'User game goes here'
+    end
   end
 end
