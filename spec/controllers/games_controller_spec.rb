@@ -32,7 +32,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'the game is expected to continue' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to eq(false)
         end
 
         it 'the player is correct' do
@@ -97,7 +97,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'the game is expected to continue' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to eq(false)
         end
 
         it 'the player is correct' do
@@ -117,7 +117,6 @@ RSpec.describe GamesController, type: :controller do
         end
       end
     end
-
   end
 
   describe '#answer' do
@@ -146,7 +145,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'the game is expected to continue' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to eq(false)
         end
 
         it 'should to increment current level' do
@@ -162,7 +161,7 @@ RSpec.describe GamesController, type: :controller do
         end
 
         it 'should to empty flashes' do
-          expect(flash.empty?).to be_truthy
+          expect(flash.empty?).to eq(true)
         end
       end
 
@@ -172,7 +171,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'should the end game' do
-          expect(game.finished?).to be_truthy
+          expect(game.finished?).to eq(true)
         end
 
         it 'should to redirect to user template' do
@@ -213,7 +212,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it ' expected the end game' do
-          expect(game.finished?).to be_truthy
+          expect(game.finished?).to eq(true)
         end
 
         it 'expect prize' do
@@ -264,7 +263,7 @@ RSpec.describe GamesController, type: :controller do
       end
 
       it 'should false in audience_help_used' do
-        expect(game_w_questions.audience_help_used).to be_falsey
+        expect(game_w_questions.audience_help_used).to eq(false)
       end
 
       context 'get audience help' do
@@ -273,11 +272,11 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'the game is expected to continue' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to eq(false)
         end
 
         it 'should true in audience_help_used' do
-          expect(game.audience_help_used).to be_truthy
+          expect(game.audience_help_used).to eq(true)
         end
 
         it 'should audience_help in help hash' do
@@ -299,11 +298,11 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'the game is expected to continue' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to eq(false)
         end
 
         it 'should true in fifty_fifty_used' do
-          expect(game.fifty_fifty_used).to be_truthy
+          expect(game.fifty_fifty_used).to eq(true)
         end
 
         it 'should audience_help in help hash' do
