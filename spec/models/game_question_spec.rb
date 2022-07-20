@@ -37,26 +37,24 @@ RSpec.describe GameQuestion, type: :model do
     end
   end
 
-  describe '#help_hash' do
-    context 'check audience_help hint' do
-      context 'without audience_help hint' do
+  describe '#audience_help' do
+    context 'without audience_help hint' do
 
-        it 'should empty audience_help in help hash' do
-          expect(game_question.help_hash).not_to include(:audience_help)
+      it 'should empty audience_help in help hash' do
+        expect(game_question.help_hash).not_to include(:audience_help)
+      end
+
+      context 'with audience_help hint' do
+        before { game_question.add_audience_help }
+
+        let(:ah) { game_question.help_hash[:audience_help] }
+
+        it 'should help hash included audience_help' do
+          expect(game_question.help_hash).to include(:audience_help)
         end
 
-        context 'with audience_help hint' do
-          before { game_question.add_audience_help }
-
-          let(:ah) { game_question.help_hash[:audience_help] }
-
-          it 'should help hash included audience_help' do
-            expect(game_question.help_hash).to include(:audience_help)
-          end
-
-          it 'should all answers keys in the hint' do
-            expect(ah.keys).to contain_exactly('a', 'b', 'c', 'd')
-          end
+        it 'should all answers keys in the hint' do
+          expect(ah.keys).to contain_exactly('a', 'b', 'c', 'd')
         end
       end
     end

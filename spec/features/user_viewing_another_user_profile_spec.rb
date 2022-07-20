@@ -8,16 +8,18 @@ RSpec.feature 'USER viewing another user profile', type: :feature do
     ]
   end
 
-  2.times do |count|
-    let!("#{:game_w_questions}#{count + 1}") { FactoryBot.create(:game_with_questions, user: users[1]) }
+  let!(:game_w_questions1) do
+    FactoryBot.create(:game_with_questions, user: users[1],
+                                            finished_at: Time.now)
   end
 
-  before(:each) do
-    game_w_questions1.update_attribute(:finished_at, Time.now)
+  let!(:game_w_questions2) do
+    FactoryBot.create(:game_with_questions, user: users[1],
+                                            current_level: 5,
+                                            prize: 100_000)
+  end
 
-    game_w_questions2.update_attribute(:current_level, 5)
-    game_w_questions2.update_attribute(:prize, 100_000)
-
+  before do
     login_as users[0]
   end
 
@@ -26,27 +28,27 @@ RSpec.feature 'USER viewing another user profile', type: :feature do
 
     click_link 'Вадик'
 
-    expect(page).to have_current_path '/users/1'
-    expect(page).to have_content 'Вадик'
+    expect(page).to have_current_path "/users/#{users[0].id}"
+    expect(page).to have_content users[0].name
     expect(page).to have_link 'Сменить имя и пароль'
 
     expect(page).not_to have_selector('.users-table table')
 
   end
 
-  scenario 'visit someone else\'s page' do
+  scenario "visit someone else's page" do
     visit '/'
 
     click_link 'Миша'
 
     expect(page).not_to have_selector('.users-table table')
 
-    expect(page).to have_current_path '/users/2'
-    expect(page).to have_content 'Миша'
+    expect(page).to have_current_path "/users/#{users[1].id}"
+    expect(page).to have_content users[0].name
     expect(page).not_to have_link 'Сменить имя и пароль'
 
     expect(page).to have_content 'Дата'
-    expect(page).to have_content I18n.l(Time.now, format: :short).to_s
+    expect(page).to have_content I18n.l(Time.now, format: :short)
 
     expect(page).to have_content 'Вопрос'
     expect(page).to have_content('в процессе')
