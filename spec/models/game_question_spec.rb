@@ -5,7 +5,6 @@ require 'rails_helper'
 # Тестовый сценарий для модели игрового вопроса,
 # в идеале весь наш функционал (все методы) должны быть протестированы.
 RSpec.describe GameQuestion, type: :model do
-
   # задаем локальную переменную game_question, доступную во всех тестах этого сценария
   # она будет создана на фабрике заново для каждого блока it, где она вызывается
   let(:game_question) { FactoryBot.create(:game_question, a: 2, b: 1, c: 4, d: 3) }
@@ -39,7 +38,6 @@ RSpec.describe GameQuestion, type: :model do
 
   describe '#audience_help' do
     context 'without audience_help hint' do
-
       it 'should empty audience_help in help hash' do
         expect(game_question.help_hash).not_to include(:audience_help)
       end
@@ -103,6 +101,10 @@ RSpec.describe GameQuestion, type: :model do
 
         it 'should be few mandatory words in friend_call hint' do
           expect(fc).to include('считает, что это вариант')
+        end
+
+        it 'should be one of the possible answers in the hint' do
+          expect(%w[A B C D]).to include(fc[-1])
         end
 
         it 'should be friend_call hint a string' do
