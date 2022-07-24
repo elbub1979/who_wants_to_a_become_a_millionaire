@@ -94,6 +94,10 @@ RSpec.feature 'USER viewing another user profile', type: :feature do
       scenario 'should have 5 question number' do
         expect(page).to have_content(game_w_questions2.current_level)
       end
+
+      scenario 'should have 5 question number' do
+        expect(page).to have_content(game_w_questions2.current_level)
+      end
     end
   end
 end
