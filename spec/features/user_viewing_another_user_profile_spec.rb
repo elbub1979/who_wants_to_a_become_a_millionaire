@@ -10,52 +10,91 @@ RSpec.feature 'USER viewing another user profile', type: :feature do
 
   let!(:game_w_questions1) do
     FactoryBot.create(:game_with_questions, user: users[1],
-                                            finished_at: Time.now)
+                                            current_level: 1,
+                                            prize: 10_000,
+                                            created_at: '21 июля, 21:51',
+                                            finished_at: '21 июля, 22:01')
   end
 
   let!(:game_w_questions2) do
     FactoryBot.create(:game_with_questions, user: users[1],
                                             current_level: 5,
-                                            prize: 100_000)
+                                            prize: 100_000,
+                                            fifty_fifty_used: true,
+                                            created_at: '22 июля, 21:51')
   end
 
   before do
+    visit '/'
     login_as users[0]
   end
 
-  scenario 'visit your page' do
-    visit '/'
+  feature 'visit your page' do
+    before { click_link 'Вадик' }
 
-    click_link 'Вадик'
+    scenario 'should the path to the corresponding user' do
+      expect(page).to have_current_path "/users/#{users[0].id}"
+    end
 
-    expect(page).to have_current_path "/users/#{users[0].id}"
-    expect(page).to have_content users[0].name
-    expect(page).to have_link 'Сменить имя и пароль'
+    scenario 'should the corresponding user name' do
+      expect(page).to have_content users[0].name
+    end
 
-    expect(page).not_to have_selector('.users-table table')
-
+    scenario 'should a link to edit the current user' do
+      expect(page).to have_link 'Сменить имя и пароль'
+    end
   end
 
-  scenario "visit someone else's page" do
-    visit '/'
+  feature "visit someone else's page" do
+    before { click_link 'Миша' }
 
-    click_link 'Миша'
+    scenario 'should the path to the corresponding user' do
+      expect(page).to have_current_path "/users/#{users[1].id}"
+    end
 
-    expect(page).not_to have_selector('.users-table table')
+    scenario 'should the corresponding user name' do
+      expect(page).to have_content users[1].name
+    end
 
-    expect(page).to have_current_path "/users/#{users[1].id}"
-    expect(page).to have_content users[0].name
-    expect(page).not_to have_link 'Сменить имя и пароль'
+    scenario 'should no link to edit the user' do
+      expect(page).not_to have_link 'Сменить имя и пароль'
+    end
 
-    expect(page).to have_content 'Дата'
-    expect(page).to have_content I18n.l(Time.now, format: :short)
+    feature 'game_w_questions1' do
+      scenario 'should have money status' do
+        expect(page).to have_content('деньги')
+      end
 
-    expect(page).to have_content 'Вопрос'
-    expect(page).to have_content('в процессе')
-    expect(page).to have_content('деньги')
+      scenario 'should have date 21 июля, 21:51' do
+        expect(page).to have_content('21 июля, 21:51')
+      end
 
-    expect(page).to have_content('Выигрыш')
-    expect(page).to have_content('100 000 ₽')
-    expect(page).to have_content('0 ₽')
+      scenario 'should have 10 000 rub prize' do
+        expect(page).to have_content('10 000 ₽')
+      end
+
+      scenario 'should have 1 question number' do
+        expect(page).to have_content(game_w_questions1.current_level)
+      end
+    end
+
+    feature 'game_w_questions2' do
+      scenario 'should have in progress status' do
+        expect(page).to have_content('в процессе')
+      end
+
+      scenario 'should have date 21 июля, 21:51' do
+        expect(page).to have_content('22 июля, 21:51')
+      end
+
+      scenario 'should have 50x50 hint used' do
+        expect(page).to have_css('span.label.label-primary.game-help-used', text: '50/50')
+      end
+
+      scenario 'should have 5 question number' do
+        expect(page).to have_content(game_w_questions2.current_level)
+      end
+    end
   end
 end
+
